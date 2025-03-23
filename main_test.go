@@ -1,6 +1,10 @@
-package main
+package main_test
 
-import "testing"
+import (
+	"testing"
+
+	counter "github.com/arthvm/counter"
+)
 
 func TestCountWords(t *testing.T) {
 	testCases := []struct {
@@ -33,11 +37,26 @@ func TestCountWords(t *testing.T) {
 			input: "This is a sentence.  This is another",
 			wants: 7,
 		},
+		{
+			name:  "prefixed multiple spaces",
+			input: "  Hello",
+			wants: 1,
+		},
+		{
+			name:  "suffixed multiple spaces",
+			input: "Hello      ",
+			wants: 1,
+		},
+		{
+			name:  "tab character",
+			input: "Hello\tWorld\n",
+			wants: 2,
+		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			res := CountWords([]byte(tc.input))
+			res := counter.CountWords([]byte(tc.input))
 
 			if res != tc.wants {
 				t.Logf("expected: %d got: %d", tc.wants, res)
