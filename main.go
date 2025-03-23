@@ -18,12 +18,19 @@ func CountWords(data []byte) int {
 		return 0
 	}
 
+	wordDetected := false
 	wordCount := 0
 
 	for _, byte := range data {
 		if byte == ' ' {
 			wordCount++
+		} else {
+			wordDetected = true
 		}
+	}
+
+	if !wordDetected {
+		return 0
 	}
 
 	wordCount++
