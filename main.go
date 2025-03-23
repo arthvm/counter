@@ -8,5 +8,13 @@ import (
 func main() {
 	data, _ := os.ReadFile("./words.txt")
 
-	fmt.Println("data:", string(data))
+	wordCount := 1
+
+	for _, byte := range data {
+		if byte == ' ' {
+			wordCount++
+		}
+	}
+
+	fmt.Println(wordCount)
 }
