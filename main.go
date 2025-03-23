@@ -8,18 +8,37 @@ import (
 )
 
 func main() {
-	filename := "./noexists.txt"
+	filename := "./lots_of_words.txt"
 
 	log.SetFlags(0)
 
-	data, err := os.ReadFile(filename)
+	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatalln("failed to read file:", err)
 	}
 
-	wordCount := CountWords(data)
+	PrintFileContents(file)
 
-	fmt.Println(wordCount)
+	// wordCount := CountWords(data)
+	//
+	// fmt.Println(wordCount)
+}
+
+func PrintFileContents(file *os.File) {
+	const bufferSize = 4096 * 2
+	buffer := make([]byte, bufferSize)
+
+	totalSize := 0
+	for {
+		size, err := file.Read(buffer)
+		if err != nil {
+			break
+		}
+
+		totalSize += size
+	}
+
+	fmt.Println("total bytes read:", totalSize)
 }
 
 func CountWords(data []byte) int {
