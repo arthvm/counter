@@ -43,6 +43,8 @@ func main() {
 
 func CountWordsInFile(filename string) (int, error) {
 	file, err := os.Open(filename)
+	defer file.Close()
+
 	if err != nil {
 		return 0, err
 	}
