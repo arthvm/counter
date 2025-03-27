@@ -58,7 +58,7 @@ func TestCountWords(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			r := strings.NewReader(tc.input)
-			res := counter.CountWords(r)
+			res := counter.GetCounts(r).Words
 
 			if res != tc.wants {
 				t.Logf("expected: %d got: %d", tc.wants, res)
@@ -110,7 +110,7 @@ func TestCountLines(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			r := strings.NewReader(tc.input)
 
-			res := counter.CountLines(r)
+			res := counter.GetCounts(r).Lines
 			if res != tc.wants {
 				t.Logf("expected: %d got: %d", tc.wants, res)
 				t.Fail()
@@ -156,9 +156,48 @@ func TestCountBytes(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			r := strings.NewReader(tc.input)
 
-			res := counter.CountBytes(r)
+			res := counter.GetCounts(r).Bytes
 			if res != tc.wants {
 				t.Logf("expected: %d got: %d", tc.wants, res)
+				t.Fail()
+			}
+		})
+	}
+}
+
+func TestGetCounts(t *testing.T) {
+	testCases := []struct {
+		name  string
+		input string
+		wants counter.Counts
+	}{
+		{
+			name:  "five words",
+			input: "one two three four five\n",
+			wants: counter.Counts{
+				Lines: 1,
+				Words: 5,
+				Bytes: 24,
+			},
+		},
+		{
+			name:  "five words no new line",
+			input: "one two three four five",
+			wants: counter.Counts{
+				Lines: 0,
+				Words: 5,
+				Bytes: 23,
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			r := strings.NewReader(tc.input)
+
+			res := counter.GetCounts(r)
+			if res != tc.wants {
+				t.Logf("expected: %v got: %v", tc.wants, res)
 				t.Fail()
 			}
 		})
