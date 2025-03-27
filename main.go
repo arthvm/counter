@@ -21,7 +21,7 @@ func main() {
 			continue
 		}
 
-		total += total + counts.Words
+		total += counts.Words
 
 		fmt.Println(counts.Lines, counts.Words, counts.Bytes, filename)
 	}
