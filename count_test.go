@@ -252,3 +252,49 @@ func TestPrintCounts(t *testing.T) {
 		})
 	}
 }
+
+func TestAddCounts(t *testing.T) {
+	type inputs struct {
+		counts counter.Counts
+		other  counter.Counts
+	}
+
+	testCases := []struct {
+		name  string
+		input inputs
+		wants counter.Counts
+	}{
+		{
+			name: "simple add by one",
+			input: inputs{
+				counts: counter.Counts{
+					Lines: 1,
+					Words: 5,
+					Bytes: 24,
+				},
+				other: counter.Counts{
+					Lines: 1,
+					Words: 1,
+					Bytes: 1,
+				},
+			},
+			wants: counter.Counts{
+				Lines: 2,
+				Words: 6,
+				Bytes: 25,
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			totals := tc.input.counts
+			res := totals.Add(tc.input.other)
+
+			if res != tc.wants {
+				t.Logf("expected: %v got: %v", tc.wants, totals)
+				t.Fail()
+			}
+		})
+	}
+}

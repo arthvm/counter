@@ -22,11 +22,7 @@ func main() {
 			continue
 		}
 
-		totals = Counts{
-			Bytes: totals.Bytes + counts.Bytes,
-			Lines: totals.Lines + counts.Lines,
-			Words: totals.Words + counts.Words,
-		}
+		totals = totals.Add(counts)
 
 		counts.Print(os.Stdout, filename)
 	}

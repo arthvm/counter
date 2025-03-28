@@ -13,6 +13,15 @@ type Counts struct {
 	Lines int
 }
 
+// Add will modify the values of the count by
+// adding the values from the other
+func (c Counts) Add(other Counts) Counts {
+	c.Bytes += other.Bytes
+	c.Words += other.Words
+	c.Lines += other.Lines
+	return c
+}
+
 func (c Counts) Print(w io.Writer, filenames ...string) {
 	fmt.Fprintf(w, "%d %d %d", c.Lines, c.Words, c.Bytes)
 
