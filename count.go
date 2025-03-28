@@ -49,7 +49,7 @@ func (c Counts) Print(w io.Writer, opts display.Options, suffixes ...string) {
 	hline := strings.Join(header, "\t") + "\t\n"
 	sline := strings.Join(stats, "\t") + "\t"
 
-	if opts.ShowHeader {
+	if opts.ShouldShowHeader() {
 		fmt.Fprint(w, hline)
 	}
 	fmt.Fprint(w, sline)
