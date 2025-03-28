@@ -13,10 +13,10 @@ type Counts struct {
 	Lines int
 }
 
-func (c Counts) Print(w io.Writer, filename string) {
+func (c Counts) Print(w io.Writer, filenames ...string) {
 	fmt.Fprintf(w, "%d %d %d", c.Lines, c.Words, c.Bytes)
 
-	if filename != "" {
+	for _, filename := range filenames {
 		fmt.Fprintf(w, " %s", filename)
 	}
 
