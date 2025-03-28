@@ -6,41 +6,13 @@ import (
 	"log"
 	"os"
 	"text/tabwriter"
+
+	"github.com/arthvm/counter"
+	"github.com/arthvm/counter/display"
 )
 
-type DisplayOptions struct {
-	ShowBytes  bool
-	ShowWords  bool
-	ShowLines  bool
-	ShowHeader bool
-}
-
-func (d DisplayOptions) ShouldShowBytes() bool {
-	if !d.ShowBytes && !d.ShowWords && !d.ShowLines {
-		return true
-	}
-
-	return d.ShowBytes
-}
-
-func (d DisplayOptions) ShouldShowWords() bool {
-	if !d.ShowBytes && !d.ShowWords && !d.ShowLines {
-		return true
-	}
-
-	return d.ShowWords
-}
-
-func (d DisplayOptions) ShouldShowLines() bool {
-	if !d.ShowBytes && !d.ShowWords && !d.ShowLines {
-		return true
-	}
-
-	return d.ShowLines
-}
-
 func main() {
-	opts := DisplayOptions{}
+	opts := display.Options{}
 
 	flag.BoolVar(
 		&opts.ShowWords,
@@ -76,13 +48,13 @@ func main() {
 
 	wr := tabwriter.NewWriter(os.Stdout, 0, 8, 1, ' ', tabwriter.AlignRight)
 
-	totals := Counts{}
+	totals := counter.Counts{}
 
 	filenames := flag.Args()
 	didError := false
 
 	for _, filename := range filenames {
-		counts, err := CountFile(filename)
+		counts, err := counter.CountFile(filename)
 		if err != nil {
 			didError = true
 			fmt.Fprintln(os.Stderr, "counter:", err)
@@ -96,7 +68,7 @@ func main() {
 	}
 
 	if len(filenames) == 0 {
-		GetCounts(os.Stdin).Print(wr, opts)
+		counter.GetCounts(os.Stdin).Print(wr, opts)
 	}
 
 	if len(filenames) > 1 {

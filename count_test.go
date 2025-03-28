@@ -1,11 +1,12 @@
-package main_test
+package counter_test
 
 import (
 	"bytes"
 	"strings"
 	"testing"
 
-	counter "github.com/arthvm/counter"
+	"github.com/arthvm/counter"
+	"github.com/arthvm/counter/display"
 )
 
 func TestCountWords(t *testing.T) {
@@ -208,7 +209,7 @@ func TestGetCounts(t *testing.T) {
 func TestPrintCounts(t *testing.T) {
 	type inputs struct {
 		counts    counter.Counts
-		opts      counter.DisplayOptions
+		opts      display.Options
 		filenames []string
 	}
 
@@ -225,7 +226,7 @@ func TestPrintCounts(t *testing.T) {
 					Words: 5,
 					Bytes: 24,
 				},
-				opts: counter.DisplayOptions{
+				opts: display.Options{
 					ShowBytes: true,
 					ShowWords: true,
 					ShowLines: true,
@@ -242,7 +243,7 @@ func TestPrintCounts(t *testing.T) {
 					Words: 4,
 					Bytes: 20,
 				},
-				opts: counter.DisplayOptions{
+				opts: display.Options{
 					ShowBytes: true,
 					ShowWords: true,
 					ShowLines: true,
@@ -270,7 +271,7 @@ func TestPrintCounts(t *testing.T) {
 					Words: 5,
 					Bytes: 24,
 				},
-				opts: counter.DisplayOptions{
+				opts: display.Options{
 					ShowBytes: false,
 					ShowWords: false,
 					ShowLines: true,
@@ -287,7 +288,7 @@ func TestPrintCounts(t *testing.T) {
 					Words: 5,
 					Bytes: 24,
 				},
-				opts: counter.DisplayOptions{
+				opts: display.Options{
 					ShowBytes: false,
 					ShowWords: true,
 					ShowLines: false,
@@ -304,7 +305,7 @@ func TestPrintCounts(t *testing.T) {
 					Words: 5,
 					Bytes: 24,
 				},
-				opts: counter.DisplayOptions{
+				opts: display.Options{
 					ShowBytes: true,
 					ShowWords: false,
 					ShowLines: false,
