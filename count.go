@@ -13,17 +13,17 @@ import (
 )
 
 type Counts struct {
-	Bytes int
-	Words int
-	Lines int
+	bytes int
+	words int
+	lines int
 }
 
 // Add will modify the values of the count by
 // adding the values from the other
 func (c Counts) Add(other Counts) Counts {
-	c.Bytes += other.Bytes
-	c.Words += other.Words
-	c.Lines += other.Lines
+	c.bytes += other.bytes
+	c.words += other.words
+	c.lines += other.lines
 	return c
 }
 
@@ -33,17 +33,17 @@ func (c Counts) Print(w io.Writer, opts display.Options, suffixes ...string) {
 
 	if opts.ShouldShowLines() {
 		header = append(header, "lines")
-		stats = append(stats, strconv.Itoa(c.Lines))
+		stats = append(stats, strconv.Itoa(c.lines))
 	}
 
 	if opts.ShouldShowWords() {
 		header = append(header, "words")
-		stats = append(stats, strconv.Itoa(c.Words))
+		stats = append(stats, strconv.Itoa(c.words))
 	}
 
 	if opts.ShouldShowBytes() {
 		header = append(header, "bytes")
-		stats = append(stats, strconv.Itoa(c.Bytes))
+		stats = append(stats, strconv.Itoa(c.bytes))
 	}
 
 	hline := strings.Join(header, "\t") + "\t\n"
@@ -74,16 +74,16 @@ func GetCounts(f io.Reader) Counts {
 			break
 		}
 
-		res.Bytes += size
+		res.bytes += size
 
 		if r == '\n' {
-			res.Lines++
+			res.lines++
 		}
 
 		isSpace := unicode.IsSpace(r)
 
 		if !isSpace && !isInsideWord {
-			res.Words++
+			res.words++
 		}
 
 		isInsideWord = !isSpace
@@ -103,9 +103,9 @@ func CountFile(filename string) (Counts, error) {
 	counts := GetCounts(file)
 
 	return Counts{
-		Bytes: counts.Bytes,
-		Words: counts.Words,
-		Lines: counts.Lines,
+		bytes: counts.bytes,
+		words: counts.words,
+		lines: counts.lines,
 	}, nil
 }
 
