@@ -26,25 +26,38 @@ func (c Counts) Add(other Counts) Counts {
 }
 
 func (c Counts) Print(w io.Writer, opts DisplayOptions, suffixes ...string) {
-	xs := []string{}
+	header := []string{}
+	stats := []string{}
 
 	if opts.ShouldShowLines() {
-		xs = append(xs, strconv.Itoa(c.Lines))
+		header = append(header, "lines")
+		stats = append(stats, strconv.Itoa(c.Lines))
 	}
 
 	if opts.ShouldShowWords() {
-		xs = append(xs, strconv.Itoa(c.Words))
+		header = append(header, "words")
+		stats = append(stats, strconv.Itoa(c.Words))
 	}
 
 	if opts.ShouldShowBytes() {
-		xs = append(xs, strconv.Itoa(c.Bytes))
+		header = append(header, "bytes")
+		stats = append(stats, strconv.Itoa(c.Bytes))
 	}
 
-	xs = append(xs, suffixes...)
+	hline := strings.Join(header, "\t") + "\t\n"
+	sline := strings.Join(stats, "\t") + "\t"
 
-	line := strings.Join(xs, " ")
+	if opts.ShowHeader {
+		fmt.Fprint(w, hline)
+	}
+	fmt.Fprint(w, sline)
 
-	fmt.Fprintln(w, line)
+	suffixStr := strings.Join(suffixes, " ")
+	if suffixStr != "" {
+		fmt.Fprintf(w, " %s", suffixStr)
+	}
+
+	fmt.Fprintf(w, "\n")
 }
 
 func GetCounts(f io.Reader) Counts {
