@@ -12,6 +12,11 @@ import (
 	"github.com/arthvm/counter/display"
 )
 
+type FileCountsResult struct {
+	counts   counter.Counts
+	filename string
+}
+
 func main() {
 	args := display.NewOptionsArgs{}
 
@@ -59,11 +64,12 @@ func main() {
 	wg := sync.WaitGroup{}
 	wg.Add(len(filenames))
 
-	l := sync.Mutex{}
+	ch := make(chan FileCountsResult)
 
 	for _, filename := range filenames {
 		go func() {
 			defer wg.Done()
+
 			counts, err := counter.CountFile(filename)
 			if err != nil {
 				didError = true
@@ -71,17 +77,25 @@ func main() {
 				return
 			}
 
-			l.Lock()
-			defer l.Unlock()
-			totals = totals.Add(counts)
-			counts.Print(wr, opts, filename)
-
-			args.ShowHeader = false
-			opts = display.NewOptions(args)
+			ch <- FileCountsResult{
+				counts:   counts,
+				filename: filename,
+			}
 		}()
 	}
 
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+
+	for res := range ch {
+		totals = totals.Add(res.counts)
+		res.counts.Print(wr, opts, res.filename)
+
+		args.ShowHeader = false
+		opts = display.NewOptions(args)
+	}
 
 	if len(filenames) == 0 {
 		counter.GetCounts(os.Stdin).Print(wr, opts)
