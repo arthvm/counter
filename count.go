@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"unicode"
 
 	"github.com/arthvm/counter/display"
@@ -107,6 +108,39 @@ func CountFile(filename string) (Counts, error) {
 		words: counts.words,
 		lines: counts.lines,
 	}, nil
+}
+
+type FileCountsResult struct {
+	Counts   Counts
+	Filename string
+	Err      error
+}
+
+func CountFiles(filenames []string) <-chan FileCountsResult {
+	ch := make(chan FileCountsResult)
+
+	wg := sync.WaitGroup{}
+	wg.Add(len(filenames))
+
+	for _, filename := range filenames {
+		go func() {
+			defer wg.Done()
+			res, err := CountFile(filename)
+
+			ch <- FileCountsResult{
+				Counts:   res,
+				Filename: filename,
+				Err:      err,
+			}
+		}()
+	}
+
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+
+	return ch
 }
 
 func CountWords(file io.Reader) int {
