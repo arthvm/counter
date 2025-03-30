@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 	"text/tabwriter"
 
 	"github.com/arthvm/counter"
@@ -55,20 +56,32 @@ func main() {
 	filenames := flag.Args()
 	didError := false
 
+	wg := sync.WaitGroup{}
+	wg.Add(len(filenames))
+
+	l := sync.Mutex{}
+
 	for _, filename := range filenames {
-		counts, err := counter.CountFile(filename)
-		if err != nil {
-			didError = true
-			fmt.Fprintln(os.Stderr, "counter:", err)
-			continue
-		}
+		go func() {
+			defer wg.Done()
+			counts, err := counter.CountFile(filename)
+			if err != nil {
+				didError = true
+				fmt.Fprintln(os.Stderr, "counter:", err)
+				return
+			}
 
-		totals = totals.Add(counts)
+			l.Lock()
+			defer l.Unlock()
+			totals = totals.Add(counts)
+			counts.Print(wr, opts, filename)
 
-		counts.Print(wr, opts, filename)
-		args.ShowHeader = false
-		opts = display.NewOptions(args)
+			args.ShowHeader = false
+			opts = display.NewOptions(args)
+		}()
 	}
+
+	wg.Wait()
 
 	if len(filenames) == 0 {
 		counter.GetCounts(os.Stdin).Print(wr, opts)
