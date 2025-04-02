@@ -154,6 +154,7 @@ type FileCountsResult struct {
 	Counts   Counts
 	Filename string
 	Err      error
+	Idx      int
 }
 
 func CountFiles(filenames []string) <-chan FileCountsResult {
@@ -162,7 +163,7 @@ func CountFiles(filenames []string) <-chan FileCountsResult {
 	wg := sync.WaitGroup{}
 	wg.Add(len(filenames))
 
-	for _, filename := range filenames {
+	for i, filename := range filenames {
 		go func() {
 			defer wg.Done()
 			res, err := CountFile(filename)
@@ -171,6 +172,7 @@ func CountFiles(filenames []string) <-chan FileCountsResult {
 				Counts:   res,
 				Filename: filename,
 				Err:      err,
+				Idx:      i,
 			}
 		}()
 	}

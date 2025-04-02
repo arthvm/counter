@@ -57,7 +57,13 @@ func main() {
 
 	ch := counter.CountFiles(filenames)
 
+	results := make([]counter.FileCountsResult, len(filenames))
+
 	for res := range ch {
+		results[res.Idx] = res
+	}
+
+	for _, res := range results {
 		if res.Err != nil {
 			didError = true
 			fmt.Fprintln(os.Stderr, "counter:", res.Err)

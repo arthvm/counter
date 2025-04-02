@@ -1,11 +1,9 @@
 package e2e
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 )
 
@@ -43,45 +41,15 @@ func TestMultipleFiles(t *testing.T) {
 		t.Fatal("failed to run command:", err)
 	}
 
-	wants := map[string]string{
-		fileA.Name(): fmt.Sprintf(" 1 5 24 %s", fileA.Name()),
-		fileB.Name(): fmt.Sprintf(" 2 3 13 %s", fileB.Name()),
-		fileC.Name(): fmt.Sprintf(" 0 0  0 %s", fileC.Name()),
-		"totals":     " 3 8 37 totals",
-	}
+	wants := fmt.Sprintf(` 1 5 24 %s
+ 2 3 13 %s
+ 0 0  0 %s
+ 3 8 37 totals
+`, fileA.Name(), fileB.Name(), fileC.Name())
 
-	scanner := bufio.NewScanner(stdout)
-
-	checkedWants := 0
-
-	for scanner.Scan() {
-		line := scanner.Text()
-		fields := strings.Fields(line)
-
-		if len(fields) == 0 {
-			t.Log("encountered empty line")
-			t.Fail()
-			continue
-		}
-
-		filename := fields[len(fields)-1]
-
-		lineWants, ok := wants[filename]
-		if !ok {
-			t.Logf("no wants for filename: %s", filename)
-			t.Fail()
-		}
-
-		checkedWants++
-
-		if line != lineWants {
-			t.Logf("line does not match: got: %s, wants: %s", line, lineWants)
-			t.Fail()
-		}
-	}
-
-	if checkedWants != len(wants) {
-		t.Logf("only checked: %d expected to check: %d", checkedWants, len(wants))
+	res := stdout.String()
+	if wants != res {
+		t.Logf("expected: %s got: %s", wants, res)
 		t.Fail()
 	}
 }
