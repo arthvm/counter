@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/arthvm/counter/display"
+	"github.com/arthvm/counter/test/assert"
 )
 
 func TestCountWords(t *testing.T) {
@@ -61,10 +62,7 @@ func TestCountWords(t *testing.T) {
 			r := strings.NewReader(tc.input)
 			res := GetCounts(r).words
 
-			if res != tc.wants {
-				t.Logf("expected: %d got: %d", tc.wants, res)
-				t.Fail()
-			}
+			assert.Equal(t, tc.wants, res)
 		})
 	}
 }
@@ -112,10 +110,7 @@ func TestCountLines(t *testing.T) {
 			r := strings.NewReader(tc.input)
 
 			res := GetCounts(r).lines
-			if res != tc.wants {
-				t.Logf("expected: %d got: %d", tc.wants, res)
-				t.Fail()
-			}
+			assert.Equal(t, tc.wants, res)
 		})
 	}
 }
@@ -158,10 +153,7 @@ func TestCountBytes(t *testing.T) {
 			r := strings.NewReader(tc.input)
 
 			res := GetCounts(r).bytes
-			if res != tc.wants {
-				t.Logf("expected: %d got: %d", tc.wants, res)
-				t.Fail()
-			}
+			assert.Equal(t, tc.wants, res)
 		})
 	}
 }
@@ -197,10 +189,7 @@ func TestGetCounts(t *testing.T) {
 			r := strings.NewReader(tc.input)
 
 			res := GetCounts(r)
-			if res != tc.wants {
-				t.Logf("expected: %v got: %v", tc.wants, res)
-				t.Fail()
-			}
+			assert.Equal(t, tc.wants, res)
 		})
 	}
 }
@@ -321,10 +310,7 @@ func TestPrintCounts(t *testing.T) {
 
 			tc.input.counts.Print(buffer, display.NewOptions(tc.input.opts), tc.input.filenames...)
 
-			if buffer.String() != tc.wants {
-				t.Logf("expected: %v got: %v", tc.wants, buffer.String())
-				t.Fail()
-			}
+			assert.Equal(t, tc.wants, buffer.String())
 		})
 	}
 }
@@ -367,10 +353,7 @@ func TestAddCounts(t *testing.T) {
 			totals := tc.input.counts
 			res := totals.Add(tc.input.other)
 
-			if res != tc.wants {
-				t.Logf("expected: %v got: %v", tc.wants, totals)
-				t.Fail()
-			}
+			assert.Equal(t, tc.wants, res)
 		})
 	}
 }

@@ -5,41 +5,30 @@ import (
 	"fmt"
 	"os"
 	"testing"
+
+	"github.com/arthvm/counter/test/assert"
 )
 
 func TestSingleFile(t *testing.T) {
 	file, err := os.CreateTemp("", "counter-test-*")
-	if err != nil {
-		t.Fatal("couldn't create temp file")
-	}
+	assert.NoError(t, err, "create file")
 	defer os.Remove(file.Name())
 
 	_, err = file.WriteString("foo bar baz\nbaz bar foo\none two three\n")
-	if err != nil {
-		t.Fatal("couldn't write to temp file")
-	}
+	assert.NoError(t, err, "write to file")
 
 	err = file.Close()
-	if err != nil {
-		t.Fatal("couldn't close file")
-	}
+	assert.NoError(t, err, "close file")
 
 	cmd, err := getCommand(file.Name())
-	if err != nil {
-		t.Fatal("couldn't get working directory:", err)
-	}
+	assert.NoError(t, err, "get working dir")
 
 	output := &bytes.Buffer{}
 	cmd.Stdout = output
 
-	if err := cmd.Run(); err != nil {
-		t.Fatal("failed to run command:", err)
-	}
+	err = cmd.Run()
+	assert.NoError(t, err, "run command")
 
 	wants := fmt.Sprintf(" 3 9 38 %s\n", file.Name())
-
-	if output.String() != wants {
-		t.Log("stdout not expected. wants: ", wants, "got:", output)
-		t.Fail()
-	}
+	assert.Equal(t, wants, output.String(), "stdout is invalid")
 }

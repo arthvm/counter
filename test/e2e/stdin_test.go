@@ -4,27 +4,22 @@ import (
 	"bytes"
 	"strings"
 	"testing"
+
+	"github.com/arthvm/counter/test/assert"
 )
 
 func TestStdin(t *testing.T) {
 	cmd, err := getCommand()
-	if err != nil {
-		t.Fatal("couldn't get working directory:", err)
-	}
+	assert.NoError(t, err, "get working dir")
 
 	output := &bytes.Buffer{}
 
 	cmd.Stdin = strings.NewReader("one two three\n")
 	cmd.Stdout = output
 
-	if err := cmd.Run(); err != nil {
-		t.Fatal("failed to run command")
-	}
+	err = cmd.Run()
+	assert.NoError(t, err, "run command")
 
 	wants := " 1 3 14\n"
-
-	if wants != output.String() {
-		t.Log("stdout is not correct: wanted:", wants, "got: ", output.String())
-		t.Fail()
-	}
+	assert.Equal(t, wants, output.String(), "stdout is invalid")
 }

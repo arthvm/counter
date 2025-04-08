@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"os"
 	"testing"
+
+	"github.com/arthvm/counter/test/assert"
 )
 
 func TestFlags(t *testing.T) {
 	file, err := createFile("one two three four five\none two three\n")
-	if err != nil {
-		t.Fatal("could not create file")
-	}
+	assert.NoError(t, err, "create file")
 	defer os.Remove(file.Name())
 
 	testCases := []struct {
@@ -41,25 +41,16 @@ func TestFlags(t *testing.T) {
 			inputs := append(tc.flags, file.Name())
 
 			cmd, err := getCommand(inputs...)
-			if err != nil {
-				t.Log("failed to get command:", err)
-				t.Fail()
-			}
+			assert.NoError(t, err, "get command")
 
 			stdout := &bytes.Buffer{}
 			cmd.Stdout = stdout
 
-			if err := cmd.Run(); err != nil {
-				t.Log("failed to run command:", err)
-				t.Fail()
-			}
+			err = cmd.Run()
+			assert.NoError(t, err, "run command")
 
 			output := stdout.String()
-
-			if output != tc.wants {
-				t.Logf("output did not match got: %s wants: %s", output, tc.wants)
-				t.Fail()
-			}
+			assert.Equal(t, tc.wants, output)
 		})
 	}
 }

@@ -3,13 +3,13 @@ package e2e
 import (
 	"bytes"
 	"testing"
+
+	"github.com/arthvm/counter/test/assert"
 )
 
 func TestNoExist(t *testing.T) {
 	cmd, err := getCommand("noexist.txt")
-	if err != nil {
-		t.Fatal("couldn't create command")
-	}
+	assert.NoError(t, err, "create command")
 
 	stderr := &bytes.Buffer{}
 	stdout := &bytes.Buffer{}
@@ -31,13 +31,6 @@ func TestNoExist(t *testing.T) {
 		t.Fail()
 	}
 
-	if stderr.String() != wantsStderr {
-		t.Log("stderr not match: wants:", wantsStderr, "got:", stderr)
-		t.Fail()
-	}
-
-	if stdout.String() != wantsStdout {
-		t.Log("stdout not match: wants:", wantsStdout, "got:", stdout)
-		t.Fail()
-	}
+	assert.Equal(t, wantsStderr, stderr.String(), "stderr doesn't match")
+	assert.Equal(t, wantsStdout, stdout.String(), "stdout doesn't match")
 }

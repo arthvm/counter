@@ -5,41 +5,34 @@ import (
 	"fmt"
 	"os"
 	"testing"
+
+	"github.com/arthvm/counter/test/assert"
 )
 
 func TestMultipleFiles(t *testing.T) {
 	fileA, err := createFile("one two three four five\n")
-	if err != nil {
-		t.Fatal("could not create fileA:", err)
-	}
+	assert.NoError(t, err, "create fileA")
 
 	defer os.Remove(fileA.Name())
 
 	fileB, err := createFile("foo bar baz\n\n")
-	if err != nil {
-		t.Fatal("could not create fileB:", err)
-	}
+	assert.NoError(t, err, "create fileB")
 
 	defer os.Remove(fileB.Name())
 
 	fileC, err := createFile("")
-	if err != nil {
-		t.Fatal("could not create fileC:", err)
-	}
+	assert.NoError(t, err, "create fileC")
 
 	defer os.Remove(fileC.Name())
 
 	cmd, err := getCommand(fileA.Name(), fileB.Name(), fileC.Name())
-	if err != nil {
-		t.Fatal("could not create command:", err)
-	}
+	assert.NoError(t, err, "create command")
 
 	stdout := &bytes.Buffer{}
 	cmd.Stdout = stdout
 
-	if err := cmd.Run(); err != nil {
-		t.Fatal("failed to run command:", err)
-	}
+	err = cmd.Run()
+	assert.NoError(t, err, "run command")
 
 	wants := fmt.Sprintf(` 1 5 24 %s
  2 3 13 %s
@@ -48,8 +41,5 @@ func TestMultipleFiles(t *testing.T) {
 `, fileA.Name(), fileB.Name(), fileC.Name())
 
 	res := stdout.String()
-	if wants != res {
-		t.Logf("expected: %s got: %s", wants, res)
-		t.Fail()
-	}
+	assert.Equal(t, wants, res)
 }
