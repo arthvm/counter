@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"testing"
@@ -43,14 +42,10 @@ func TestFlags(t *testing.T) {
 			cmd, err := getCommand(inputs...)
 			assert.NoError(t, err, "get command")
 
-			stdout := &bytes.Buffer{}
-			cmd.Stdout = stdout
-
-			err = cmd.Run()
+			output, err := cmd.Output()
 			assert.NoError(t, err, "run command")
 
-			output := stdout.String()
-			assert.Equal(t, tc.wants, output)
+			assert.Equal(t, tc.wants, string(output))
 		})
 	}
 }

@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"testing"
@@ -28,10 +27,7 @@ func TestMultipleFiles(t *testing.T) {
 	cmd, err := getCommand(fileA.Name(), fileB.Name(), fileC.Name())
 	assert.NoError(t, err, "create command")
 
-	stdout := &bytes.Buffer{}
-	cmd.Stdout = stdout
-
-	err = cmd.Run()
+	output, err := cmd.Output()
 	assert.NoError(t, err, "run command")
 
 	wants := fmt.Sprintf(` 1 5 24 %s
@@ -40,6 +36,5 @@ func TestMultipleFiles(t *testing.T) {
  3 8 37 totals
 `, fileA.Name(), fileB.Name(), fileC.Name())
 
-	res := stdout.String()
-	assert.Equal(t, wants, res)
+	assert.Equal(t, wants, string(output))
 }

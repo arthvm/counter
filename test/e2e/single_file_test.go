@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"testing"
@@ -23,12 +22,9 @@ func TestSingleFile(t *testing.T) {
 	cmd, err := getCommand(file.Name())
 	assert.NoError(t, err, "get working dir")
 
-	output := &bytes.Buffer{}
-	cmd.Stdout = output
-
-	err = cmd.Run()
+	output, err := cmd.Output()
 	assert.NoError(t, err, "run command")
 
 	wants := fmt.Sprintf(" 3 9 38 %s\n", file.Name())
-	assert.Equal(t, wants, output.String(), "stdout is invalid")
+	assert.Equal(t, wants, string(output), "stdout is invalid")
 }

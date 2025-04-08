@@ -12,15 +12,12 @@ func TestNoExist(t *testing.T) {
 	assert.NoError(t, err, "create command")
 
 	stderr := &bytes.Buffer{}
-	stdout := &bytes.Buffer{}
-
 	cmd.Stderr = stderr
-	cmd.Stdout = stdout
 
 	wantsStderr := "counter: open noexist.txt: no such file or directory\n"
 	wantsStdout := ""
 
-	err = cmd.Run()
+	output, err := cmd.Output()
 	if err == nil {
 		t.Log("command succeded when should have failed")
 		t.Fail()
@@ -32,5 +29,5 @@ func TestNoExist(t *testing.T) {
 	}
 
 	assert.Equal(t, wantsStderr, stderr.String(), "stderr doesn't match")
-	assert.Equal(t, wantsStdout, stdout.String(), "stdout doesn't match")
+	assert.Equal(t, wantsStdout, string(output), "stdout doesn't match")
 }
